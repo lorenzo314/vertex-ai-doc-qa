@@ -1,0 +1,24 @@
+# ruff configuration
+# https://docs.astral.sh/ruff/configuration/
+
+target-version = "py312"
+line-length = 100
+
+[lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+]
+ignore = [
+    "E501",  # line too long — handled by formatter
+]
+
+[lint.per-file-ignores]
+"infra/*.py" = ["T201"]   # allow print() in setup scripts
+
+[format]
+quote-style = "double"
+indent-style = "space"

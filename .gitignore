@@ -1,0 +1,44 @@
+# Environment
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Data — do not commit PDFs or generated indexes
+track_genai/data/*
+!track_genai/data/.gitkeep
+
+track_automl/data/*
+!track_automl/data/.gitkeep
+
+track_genai/documents.json
+
+# GCP credentials
+*.json
+!.env.example
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Gradio
+gradio_cached_examples/
+flagged/
