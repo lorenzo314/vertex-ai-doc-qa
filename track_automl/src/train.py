@@ -176,8 +176,15 @@ def start_training(dataset: aiplatform.TabularDataset) -> aiplatform.AutoMLTabul
     )
 
     print("\n[train] ✓ Job submitted.")
-    print(f"[train] Job resource name: {job.resource_name}")
-    print(f"\n  Save this for later:\n  {job.resource_name}\n")
+    try:
+        resource_name = job.resource_name
+        print(f"[train] Job resource name: {resource_name}")
+        print(f"\n  Save this for later:\n  {resource_name}\n")
+    except (AttributeError, RuntimeError):
+        print("[train] Resource name not yet available (job submitted asynchronously).")
+        print(
+            f"[train] Monitor: https://console.cloud.google.com/vertex-ai/training?project={PROJECT_ID}"
+        )
     return job
 
 
