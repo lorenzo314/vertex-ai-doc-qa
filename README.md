@@ -72,7 +72,7 @@ vertex-ai-doc-qa/
 │       ├── gemini_client.py    # Gemini API wrapper
 │       └── app.py              # Gradio UI
 │
-└── track_automl/               # Classic ML track (in progress)
+└── track_automl/               # Classic ML track
     ├── data/
     │   ├── raw/                # original downloaded datasets (not committed)
     │   └── processed/          # cleaned CSVs ready for Vertex AI (not committed)
@@ -220,6 +220,12 @@ The file is not committed — it will be uploaded to Cloud Storage by `train.py`
 | `python track_genai/src/ingest.py --overwrite` | Re-upload existing files |
 | `python track_genai/src/app.py` | Launch the Gradio UI |
 | `python track_genai/src/gemini_client.py` | Run a standalone API test |
+| `python track_automl/src/train.py` | Preprocess, upload and train AutoML model |
+| `python track_automl/src/evaluate.py` | Evaluate trained model metrics |
+| `python track_automl/src/predict.py --deploy` | Deploy model to endpoint |
+| `python track_automl/src/predict.py --example high-risk` | Run a sample prediction |
+| `python track_automl/src/predict.py --undeploy` | Undeploy endpoint |
+| `python track_automl/src/pipeline.py --compile-only` | Compile Vertex AI Pipeline |
 
 ---
 
@@ -248,11 +254,12 @@ Set a budget alert in GCP Billing to avoid surprises.
 - [x] Token usage and cost display per query
 - [x] Gradio chat UI
 - [x] GitHub Actions CI (lint + type check)
+- [x] **Track AutoML** — Telco churn classifier using Vertex AI AutoML (AUC-ROC 0.88, AUC-PRC 0.88) with preprocessing pipeline, evaluation script, online and batch prediction
+- [x] **Vertex AI Pipeline** — full workflow orchestrated as a reusable KFP pipeline (compile with `python track_automl/src/pipeline.py --compile-only`)
 
 ## What remains to be done
 
-- [ ] **Track AutoML** — train and deploy a Telco churn classifier using Vertex AI AutoML (in progress)
-- [ ] **Vertex AI Pipelines** — orchestrate ingest → train → deploy as a reproducible pipeline
+- [ ] **Feature importance (explainability)** — requires `enable_eap=True` in the `AutoMLTabularTrainingJob`, not enabled in the current training job
 - [ ] **Persistent conversation history** — save/load sessions to Firestore or GCS
 - [ ] **Multi-document filtering** — let the user select which documents to query per question
 - [ ] **Streaming responses** — stream Gemini output token-by-token for a better UX
