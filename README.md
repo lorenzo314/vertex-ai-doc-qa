@@ -72,13 +72,15 @@ vertex-ai-doc-qa/
 │       ├── gemini_client.py    # Gemini API wrapper
 │       └── app.py              # Gradio UI
 │
-└── track_automl/               # Classic ML track (planned)
+└── track_automl/               # Classic ML track (in progress)
     ├── data/
+    │   ├── raw/                # original downloaded datasets (not committed)
+    │   └── processed/          # cleaned CSVs ready for Vertex AI (not committed)
     └── src/
-        ├── train.py
-        ├── predict.py
-        ├── evaluate.py
-        └── pipeline.py
+        ├── train.py            # upload dataset, kick off AutoML training job
+        ├── predict.py          # run predictions against deployed model endpoint
+        ├── evaluate.py         # pull metrics and feature importance
+        └── pipeline.py         # orchestrate full workflow as Vertex AI Pipeline
 ```
 
 ---
@@ -194,6 +196,17 @@ python track_genai/src/app.py
 
 Open [http://localhost:7860](http://localhost:7860) in your browser.
 
+### 9. (Optional) Set up the AutoML track
+
+Download the [Telco Customer Churn dataset](https://www.kaggle.com/datasets/blastchar/telco-customer-churn)
+from Kaggle (free account required), unzip it, and place the CSV in the raw data folder:
+
+```
+track_automl/data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+```
+
+The file is not committed — it will be uploaded to Cloud Storage by `train.py`.
+
 ---
 
 ## Usage
@@ -238,7 +251,7 @@ Set a budget alert in GCP Billing to avoid surprises.
 
 ## What remains to be done
 
-- [ ] **Track AutoML** — train and deploy a tabular classification model using Vertex AI AutoML
+- [ ] **Track AutoML** — train and deploy a Telco churn classifier using Vertex AI AutoML (in progress)
 - [ ] **Vertex AI Pipelines** — orchestrate ingest → train → deploy as a reproducible pipeline
 - [ ] **Persistent conversation history** — save/load sessions to Firestore or GCS
 - [ ] **Multi-document filtering** — let the user select which documents to query per question
