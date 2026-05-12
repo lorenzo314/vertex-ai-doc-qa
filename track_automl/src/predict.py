@@ -39,8 +39,7 @@ load_dotenv()
 PROJECT_ID = os.getenv("GCP_PROJECT_ID")
 REGION = os.getenv("GCP_REGION", "us-central1")
 MODEL_DISPLAY_NAME = "telco-churn-automl"
-ENDPOINT_DISPLAY_NAME = "telco-churn-endpoint"
-
+ENDPOINT_DISPLAY_NAME = "telco-churn-automl_endpoint"
 # ---------------------------------------------------------------------------
 # Example customer profiles for quick testing
 # ---------------------------------------------------------------------------
@@ -50,10 +49,10 @@ EXAMPLE_PROFILES: dict[str, dict[str, Any]] = {
         "description": "Month-to-month contract, high charges, no security services",
         "features": {
             "gender": "Female",
-            "SeniorCitizen": 0,
+            "SeniorCitizen": "0",
             "Partner": "No",
             "Dependents": "No",
-            "tenure": 2,
+            "tenure": "2",
             "PhoneService": "Yes",
             "MultipleLines": "No",
             "InternetService": "Fiber optic",
@@ -66,18 +65,18 @@ EXAMPLE_PROFILES: dict[str, dict[str, Any]] = {
             "Contract": "Month-to-month",
             "PaperlessBilling": "Yes",
             "PaymentMethod": "Electronic check",
-            "MonthlyCharges": 85.0,
-            "TotalCharges": 170.0,
+            "MonthlyCharges": "85.0",
+            "TotalCharges": "170.0",
         },
     },
     "low-risk": {
         "description": "Two-year contract, long tenure, bundled services",
         "features": {
             "gender": "Male",
-            "SeniorCitizen": 0,
+            "SeniorCitizen": "0",
             "Partner": "Yes",
             "Dependents": "Yes",
-            "tenure": 60,
+            "tenure": "60",
             "PhoneService": "Yes",
             "MultipleLines": "Yes",
             "InternetService": "DSL",
@@ -90,8 +89,8 @@ EXAMPLE_PROFILES: dict[str, dict[str, Any]] = {
             "Contract": "Two year",
             "PaperlessBilling": "No",
             "PaymentMethod": "Bank transfer (automatic)",
-            "MonthlyCharges": 65.0,
-            "TotalCharges": 3900.0,
+            "MonthlyCharges": "65.0",
+            "TotalCharges": "3900.0",
         },
     },
 }
