@@ -17,8 +17,10 @@ build/
 track_genai/data/*
 !track_genai/data/.gitkeep
 
-track_automl/data/*
-!track_automl/data/.gitkeep
+track_automl/data/raw/*
+track_automl/data/processed/*
+!track_automl/data/raw/.gitkeep
+!track_automl/data/processed/.gitkeep
 
 track_genai/documents.json
 
