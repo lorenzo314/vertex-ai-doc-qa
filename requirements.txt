@@ -2,6 +2,7 @@
 google-cloud-aiplatform>=1.90.0
 google-cloud-storage>=2.18.0
 google-genai>=1.0.0
+google-cloud-pipeline-components>=2.15.0
 
 # App
 gradio>=6.0.0
@@ -10,3 +11,7 @@ python-dotenv>=1.0.0
 # Linting & formatting (also used in CI)
 ruff>=0.4.0
 mypy>=1.10.0
+
+# automl
+pandas>=2.0.0
+kfp>=2.7.0
