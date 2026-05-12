@@ -96,23 +96,17 @@ def print_classification_metrics(evaluation: aiplatform.ModelEvaluation) -> dict
     return metrics
 
 
-def print_feature_importance(model: aiplatform.Model) -> list[dict]:
-    """Print feature importance (SHAP-based) for the model."""
+def print_feature_importance(evaluation: aiplatform.ModelEvaluation) -> list[dict]:
+    """Print feature importance from evaluation metrics."""
     try:
-        explanations = model.get_model_evaluation()  # type: ignore[attr-defined]
-        if not explanations or not explanations.mean_attributions:  # type: ignore[attr-defined]
+        fi = dict(evaluation.metrics).get("featureImportance")
+        if not fi:
             print("\n[info] No feature importance data available yet.")
             return []
 
-        attributions = explanations.mean_attributions[0].feature_attributions  # type: ignore[attr-defined]
-        # Sort by absolute importance descending
-        sorted_features = sorted(
-            attributions.items(),
-            key=lambda x: abs(x[1]),
-            reverse=True,
-        )
+        sorted_features = sorted(fi.items(), key=lambda x: abs(x[1]), reverse=True)
 
-        print("\n── Feature importance (SHAP) ───────────────────────────")
+        print("\n── Feature importance ──────────────────────────────────")
         max_val = abs(sorted_features[0][1]) if sorted_features else 1
         for feature, importance in sorted_features:
             bar_len = int(abs(importance) / max_val * 30)
@@ -158,7 +152,7 @@ def evaluate(model_display_name: str, export_path: str | None = None) -> dict:
     print(f"\n[eval] Evaluation slice: {evaluation.display_name or 'overall'}")
 
     metrics = print_classification_metrics(evaluation)
-    feature_importance = print_feature_importance(model)
+    feature_importance = print_feature_importance(evaluation)
 
     summary = {
         "model_display_name": model_display_name,
