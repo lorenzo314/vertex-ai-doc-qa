@@ -209,6 +209,12 @@ The file is not committed — it will be uploaded to Cloud Storage by `train.py`
 
 ---
 
+> **Cost warning:** Deploying a model endpoint incurs hourly charges (~$0.10/hr)
+> even when idle. Always undeploy when done:
+> ```bash
+> python track_automl/src/predict.py --undeploy
+> ```
+
 ## Usage
 
 | Command | Description |
@@ -224,7 +230,7 @@ The file is not committed — it will be uploaded to Cloud Storage by `train.py`
 | `python track_automl/src/evaluate.py` | Evaluate trained model metrics |
 | `python track_automl/src/predict.py --deploy` | Deploy model to endpoint |
 | `python track_automl/src/predict.py --example high-risk` | Run a sample prediction |
-| `python track_automl/src/predict.py --undeploy` | Undeploy endpoint |
+| `python track_automl/src/predict.py --deploy` | Deploy model to endpoint ⚠️ incurs hourly charges |
 | `python track_automl/src/pipeline.py --compile-only` | Compile Vertex AI Pipeline |
 
 ---
