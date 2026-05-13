@@ -69,11 +69,12 @@ def validate_env() -> None:
 
 
 def build_pipeline():  # type: ignore[return]
+    import kfp
+    from kfp.dsl import component, pipeline, Metrics, Output
     from google_cloud_pipeline_components.v1.automl.training_job import (
         AutoMLTabularTrainingJobRunOp,
     )
     from google_cloud_pipeline_components.v1.dataset import TabularDatasetCreateOp
-    from kfp.dsl import Metrics, Output, component, pipeline
 
     # ── Step 1: Preprocess and upload ───────────────────────────────────────
     # Returns a plain string (GCS URI) so TabularDatasetCreateOp can consume it.
@@ -91,10 +92,9 @@ def build_pipeline():  # type: ignore[return]
         Download the raw CSV from GCS, clean it, re-upload the processed
         version, and return its GCS URI as a plain string.
         """
-        from pathlib import Path
-
         import pandas as pd
-        from google.cloud import storage  # type: ignore[attr-defined]
+        from google.cloud import storage
+        from pathlib import Path
 
         raw_path = Path("/tmp/raw.csv")
         clean_path = Path("/tmp/telco_churn_clean.csv")
@@ -103,18 +103,24 @@ def build_pipeline():  # type: ignore[return]
         bucket_obj = client.bucket(bucket)
 
         # Download raw CSV
-        blob = bucket_obj.blob(f"{gcs_prefix}/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv")
+        blob = bucket_obj.blob(
+            f"{gcs_prefix}/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv"
+        )
         blob.download_to_filename(str(raw_path))
 
         # Clean
         df = pd.read_csv(raw_path)
         df = df.drop(columns=["customerID"])
         df["TotalCharges"] = df["TotalCharges"].replace(" ", "0")
-        df["TotalCharges"] = pd.to_numeric(df["TotalCharges"], errors="coerce").fillna(0)
+        df["TotalCharges"] = (
+            pd.to_numeric(df["TotalCharges"], errors="coerce").fillna(0)
+        )
         df.to_csv(clean_path, index=False)
 
         # Upload cleaned CSV
-        dest_blob = bucket_obj.blob(f"{gcs_prefix}/processed/telco_churn_clean.csv")
+        dest_blob = bucket_obj.blob(
+            f"{gcs_prefix}/processed/telco_churn_clean.csv"
+        )
         dest_blob.upload_from_filename(str(clean_path), content_type="text/csv")
 
         gcs_uri = f"gs://{bucket}/{gcs_prefix}/processed/telco_churn_clean.csv"
@@ -168,7 +174,9 @@ def build_pipeline():  # type: ignore[return]
 
     @pipeline(
         name=PIPELINE_NAME,
-        description=("Telco churn classification: preprocess → dataset → train → evaluate"),
+        description=(
+            "Telco churn classification: preprocess → dataset → train → evaluate"
+        ),
     )
     def telco_churn_pipeline(
         project: str = PROJECT_ID or "",
@@ -178,7 +186,7 @@ def build_pipeline():  # type: ignore[return]
         target_column: str = TARGET_COLUMN,
         model_display_name: str = MODEL_DISPLAY_NAME,
         dataset_display_name: str = DATASET_DISPLAY_NAME,
-        budget_milli_node_hours: int = TRAINING_BUDGET_NODE_HOURS * 1000,
+        budget_node_hours: int = TRAINING_BUDGET_NODE_HOURS,
     ) -> None:
 
         # Step 1 — preprocess and upload; returns a plain string URI
@@ -206,7 +214,7 @@ def build_pipeline():  # type: ignore[return]
             training_fraction_split=0.8,
             validation_fraction_split=0.1,
             test_fraction_split=0.1,
-            budget_milli_node_hours=budget_milli_node_hours,
+            budget_milli_node_hours=budget_node_hours * 1000,
         ).after(dataset_task)
 
         # Step 4 — evaluate
@@ -267,9 +275,12 @@ def run_pipeline() -> None:
     )
     job.submit()
 
-    print("\n[run] ✓ Pipeline submitted.")
-    print("[run] Monitor at:")
-    print(f"      https://console.cloud.google.com/vertex-ai/pipelines?project={PROJECT_ID}")
+    print(f"\n[run] ✓ Pipeline submitted.")
+    print(f"[run] Monitor at:")
+    print(
+        f"      https://console.cloud.google.com/vertex-ai/pipelines"
+        f"?project={PROJECT_ID}"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -283,16 +294,9 @@ def check_status(job_name: str) -> None:
 
     aiplatform.init(project=PROJECT_ID, location=REGION)
     job = aiplatform.PipelineJob.get(job_name)
-
-    if hasattr(job, "display_name") and job.display_name is not None:
-        print(f"[status] Name   : {job.display_name}")
-
-    if hasattr(job, "state_name") and job.state_name is not None:
-        assert job.state is not None
-        print(f"[status] State  : {job.state.name}")
-
-    if hasattr(job, "create_time") and job.create_time is not None:
-        print(f"[status] Created: {job.create_time}")
+    print(f"[status] Name   : {job.display_name}")
+    print(f"[status] State  : {job.state.name}")
+    print(f"[status] Created: {job.create_time}")
 
 
 # ---------------------------------------------------------------------------
