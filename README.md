@@ -209,6 +209,10 @@ The file is not committed — it will be uploaded to Cloud Storage by `train.py`
 
 ---
 
+> **Cost warning:** AutoML training costs approximately $20 per node hour.
+> The default budget in `train.py` is 1 node hour (~$20). Make sure billing
+> alerts are set before running a training job.
+
 > **Cost warning:** Deploying a model endpoint incurs hourly charges (~$0.10/hr)
 > even when idle. Always undeploy when done:
 > ```bash
@@ -237,16 +241,28 @@ The file is not committed — it will be uploaded to Cloud Storage by `train.py`
 
 ## Cost
 
-Using Gemini 2.5 Flash with a typical research paper (~4,000 input tokens per question):
+### Gemini 2.5 Flash (document Q&A)
+
+Using a typical research paper (~4,000 input tokens per question):
 
 | | Cost |
-|---|---|
+|---|---:|
 | Per question | ~$0.0007 |
 | 100 questions | ~$0.07 |
 | 1,000 questions | ~$0.70 |
 
-Cloud Storage costs for a few PDFs are negligible (well within the free tier).
-Set a budget alert in GCP Billing to avoid surprises.
+### AutoML training and endpoint
+
+| | Cost |
+|---|---:|
+| AutoML training job (1 node hour) | ~$20 |
+| Deployed endpoint (per hour idle) | ~$0.10 |
+
+> **Warning:** AutoML training and endpoint costs can add up quickly. Set billing
+> alerts in GCP before running training jobs, and always undeploy endpoints when
+> done testing.
+
+Cloud Storage costs for a few PDFs and CSVs are negligible (well within the free tier).
 
 ---
 
